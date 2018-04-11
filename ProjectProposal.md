@@ -20,3 +20,9 @@ To win the game, the Player must kill the Wumpus with its crooked arrow that can
 | 2         | 4/20 | Game with 1 player and no bats/pits  |
 | 3         | 4/27 | Game with 1 player and bats and pits |
 | 4         | 5/4  | Game with 2 player and bats and pits |
+
+
+
+
+### notes...
+- Bats drop Wumpus a room away, can be your room.  (implement?)
