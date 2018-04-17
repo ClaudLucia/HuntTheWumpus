@@ -17,6 +17,6 @@ To win the game, the Player must kill the Wumpus with its crooked arrow that can
 | Milestone | Due  | Description                          |
 | --------- | ---- | ------------------------------------ |
 | 1         | 4/13 | Finish and submit project proposal   |
-| 2         | 4/20 | Game with 1 player and no bats/pits  |
-| 3         | 4/27 | Game with 1 player and bats and pits |
-| 4         | 5/4  | Game with 2 player and bats and pits |
+| 2         | 4/23 | Game with 1 player and no bats/pits  |
+| 3         | 4/30 | Game with 1 player and bats and pits |
+| 4         | 5/7  | Game with 2 player and bats and pits |
