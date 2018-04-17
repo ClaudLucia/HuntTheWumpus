@@ -1,0 +1,36 @@
+Room = 1 | 2 | .. | 20
+RoomType = EmptyRoom | BatRoom | PitRoom 
+Command = move | shoot 
+
+## Example of a game
+Welcome to Hunt the Wumpus
+Press [enter] to start
+
+Starting game...
+You are in room 2
+Tunnels lead to 1 7 3
+
+Enter a command:
+move 7
+or
+shoot 20
+
+Which path do you want to take?
+A 1 6 15 20
+B 1 5 10 15 20
+C 7 11 6 15 20
+...
+
+## Functions
+moveRoom
+shootArrow
+
+decryptCommand
+
+alertSmell
+alertHear
+alertFeel
+
+
+
+
