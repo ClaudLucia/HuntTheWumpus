@@ -19,17 +19,36 @@ import Network.HTTP.Server (defaultConfig,
                             StatusCode(OK)
                            )
 import Network.HTTP.Server.Logger (stdLogger)
-import System.Random (getStdGen,randomR)
+--import System.Random (getStdGen,randomR)
 import System.Environment (getArgs)
 import Text.JSON.Generic
 
-data Guess = Guess { guess :: Int } deriving (Eq,Data,Typeable,Show)
+type CaveMap = [Room]
+data Room = BatRm | PitRm | WumpusRm | EmptyRm
+  deriving (Eq,Data,Typeable)
+
+data RoomType = BatRm | PitRm | WumpusRm | EmptyRm
+data Room = Room Int RoomType
+
+instance Show Room where
+  show BatRm    = "BatRm"
+  show PitRm    = "PitRm"
+  show WumpusRm = "WumpusRm"
+  show EmptyRm  = "EmptyRm"
+
+
 
 huntServer :: IO ()
 huntServer = do
     args <- map read <$> getArgs
-    gen <- getStdGen
-    num <- return (fst $ randomR (1,10) gen :: Int)
+    -- create the map
+    caveMap :: CaveMap
+    caveMap <- [BatRm, PitRm, WumpusRm, Empty, Empty,
+                Empty, Empty, BatRm, PitRm , Empty,
+                BatRm, Empty, PitRm, Empty, Empty,
+                Empty, Empty, Empty, PitRm, Empty]
+    --gen <- getStdGen
+    --num <- return (fst $ randomR (1,10) gen :: Int)
     let port = if null args then 2018 else head args
     serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleGuess (Guess num)
 
