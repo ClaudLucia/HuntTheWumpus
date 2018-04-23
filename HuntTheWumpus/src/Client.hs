@@ -22,6 +22,7 @@ huntClient args = clientLoop serverURI
 clientLoop :: URI -> IO ()
 clientLoop uri = do
     g   <- promptStart
+    putStr "game start"
     --msg <- submitGuess g uri
     --putStrLn msg
     --clientLoop uri
