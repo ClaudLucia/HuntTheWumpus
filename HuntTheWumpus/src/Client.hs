@@ -16,7 +16,7 @@ huntClient :: [String] -> IO ()
 huntClient args = clientLoop serverURI
   where
     Just serverURI = case intercalate ":" (take 2 args) of
-                       ""  -> parseURI "http://localhost:2018" 	
+                       ""  -> parseURI "http://localhost:2018"  
                        uri -> parseURI ("http://" ++ uri)
 
 clientLoop :: URI -> IO ()
@@ -27,8 +27,8 @@ clientLoop uri = do
     --putStrLn msg
     --clientLoop uri
 
-promptStart :: IO Guess
-promptStart = putStr "Welcome to Hunt the Wumpus. \n Press [Enter] to start: " >> hFlush stdout >> Guess <$> readLn
+promptStart :: IO String
+promptStart = putStr "Welcome to Hunt the Wumpus. \n Press [Enter] to start: " >> hFlush stdout >> getLine
 
 submitGuess :: Guess -> URI -> IO String
 submitGuess g uri = do
