@@ -5,5 +5,5 @@ import Client
 import System.Environment (getArgs)
 
 main :: IO ()
-main = getArgs >>= guessClient
+main = getArgs >>= huntClient
 

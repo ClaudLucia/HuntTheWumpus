@@ -25,8 +25,8 @@ import Text.JSON.Generic
 
 data Guess = Guess { guess :: Int } deriving (Eq,Data,Typeable,Show)
 
-guessServer :: IO ()
-guessServer = do
+huntServer :: IO ()
+huntServer = do
     args <- map read <$> getArgs
     gen <- getStdGen
     num <- return (fst $ randomR (1,10) gen :: Int)
