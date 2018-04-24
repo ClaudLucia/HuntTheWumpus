@@ -37,7 +37,6 @@ instance Show Room where
   show EmptyRm  = "EmptyRm"
 
 
-
 huntServer :: IO ()
 huntServer = do
     args <- map read <$> getArgs
