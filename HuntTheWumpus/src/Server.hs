@@ -56,7 +56,7 @@ handleGuess :: Guess -> Handler String
 handleGuess n addr url req =
     if userGuess == n
     then return $ sendText OK ("You win! The number is " ++ (show $ guess userGuess) ++ "!\n")
-    else return $ sendText OK ("Try again... the number is not " ++ (show $ guess userGuess) ++ "\n")
+    else return $ sendText OK ("Oh no, you lost! press  " ++ (show $ guess userGuess) ++ "\n")
   where userGuess = decodeJSON $ rqBody req
 
 sendText :: StatusCode -> String -> Response String
