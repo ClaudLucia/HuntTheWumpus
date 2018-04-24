@@ -1,0 +1,75 @@
+Welcome
+press y or i
+>i
+
+Instructions
+>y
+
+Game started
+You are in room 4
+Tunnels lead to 3, 14, 5
+Enter a command:
+>move 14
+
+You are in room 14
+Tunnels lead to 4, 13, 15
+I feel a breeze
+Enter a command:
+>move 15
+
+You fell into a pit!
+Game over
+Press y to start again
+>y
+
+Game started
+You are in room 9
+Tunnels lead to 10, 12, 19
+I hear bats
+Enter a command:
+>move 12
+
+You are picked up by bats!
+You are now in room 8
+Tunnels lead to 1,7,11
+I smell a Wumpus
+Enter a command:
+>shoot 7
+
+The arrow can continue moving
+Tunnels lead to 6 and 17
+Enter a room number:
+>6
+
+The arrow can continue moving
+Tunnels lead to 5 and 15
+Enter a room number:
+>5
+
+The arrow can continue moving
+Tunnels lead to 1 and 4
+Enter a room number:
+
+-- case 1 --
+>1
+You win!
+The Wumpus was killed
+Press y to play again
+>y
+------------
+-- case 2 --
+> 4
+The arrow can continue moving
+Tunnels lead to 3 and 14
+Enter a room number:
+> 3
+
+The arrow stopped. No wumpus was killed.
+You are still in room 8.
+I smell a Wumpus
+Tunnels lead to 1, 7, 11
+Enter a command:
+>move 1
+
+Game over! You got eaten by a Wumpus
+Press y to start again
