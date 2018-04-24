@@ -16,7 +16,7 @@ huntClient :: [String] -> IO ()
 huntClient args = clientLoop serverURI
   where
     Just serverURI = case intercalate ":" (take 2 args) of
-                       ""  -> parseURI "http://localhost:2018"  
+                       ""  -> parseURI "http://127.0.0.1:2018"  
                        uri -> parseURI ("http://" ++ uri)
 
 clientLoop :: URI -> IO ()

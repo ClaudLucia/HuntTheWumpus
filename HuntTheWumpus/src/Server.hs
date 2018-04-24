@@ -27,8 +27,8 @@ type CaveMap = [Room]
 data Room = BatRm | PitRm | WumpusRm | EmptyRm
   deriving (Eq,Data,Typeable)
 
-data RoomType = BatRm | PitRm | WumpusRm | EmptyRm
-data Room = Room Int RoomType
+--data RoomType = BatRm | PitRm | WumpusRm | EmptyRm
+--data Room = Room Int RoomType
 
 instance Show Room where
   show BatRm    = "BatRm"
