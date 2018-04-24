@@ -23,10 +23,13 @@ clientStart :: URI -> IO ()
 clientStart uri = do
     startGame <- promptStart
     if (startGame == "y")
-      then putStrLn "Welcome to the game"
+      then putStr "Welcome to the game"
       else (if (startGame == "i")
-              then nextCmd <- showInstructions
-              else putStrLn "Invalid command")
+              then (putStr "Instructions: \n \
+                             \ You have 1 arrow that can shoot down a path of 5 rooms. \n \
+                             \ You will be prompted with the rooms that it will travel. \n \
+                             \ Enter \"y\" to start. \n " )
+              else putStr "Invalid command")
 
 --clientLoop :: URI -> IO ()
 --clientLoop uri = do
@@ -37,23 +40,22 @@ clientStart uri = do
     --clientLoop uri
 
 promptStart :: IO String
-promptStart = putStr "Welcome to Hunt the Wumpus. \n 
-                      You have been brought to Room 4 in a cave with 20 rooms. \n
-                      Some have bats and some have a deep pit. \n
-                      The Wumpus is also in one of them. Find where he is and shoot \n
-                      him with your arrow before he finds and eats you. \n
-                      Are you ready to hunt? \n
-                      
-                      Enter \"y\" to start. \n
-                      Enter \"i\" for more instructions." >> hFlush stdout >> getLine
+promptStart = 
+  putStr "Welcome to Hunt the Wumpus. \n \
+          \ You have been brought to Room 4 in a cave with 20 rooms. \n \
+          \ Some have bats and some have a deep pit. \n \
+          \ The Wumpus is also in one of them. Find where he is and shoot \n \
+          \ him with your arrow before he finds and eats you. \n \
+          \ Are you ready to hunt? \n \
+          \ Enter \"y\" to start. \n \
+          \ Enter \"i\" for more instructions." >> hFlush stdout >> getLine
 
-showInstructions :: IO String
-showInstructions = putStr "Instructions: \n
-                           You have 1 arrow that can shoot down a path of 5 rooms. \n
-                           You will be prompted with the rooms that it will travel. \n
-                           
-                           Enter \"y\" to start. \n 
-                           " >> hFlush stdout >> getLine
+--showInstructions :: I
+--showInstructions = putStrLn "Instructions: \n" ++
+--                           "You have 1 arrow that can shoot down a path of 5 rooms. \n" ++
+--                           "You will be prompted with the rooms that it will travel. \n" ++
+--                           "Enter \"y\" to start. \n " 
+                           -- >> hFlush stdout >> getLine
 
 submitGuess :: Guess -> URI -> IO String
 submitGuess g uri = do

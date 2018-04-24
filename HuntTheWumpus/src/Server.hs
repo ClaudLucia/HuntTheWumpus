@@ -19,7 +19,7 @@ import Network.HTTP.Server (defaultConfig,
                             StatusCode(OK)
                            )
 import Network.HTTP.Server.Logger (stdLogger)
---import System.Random (getStdGen,randomR)
+import System.Random (getStdGen,randomR)
 import System.Environment (getArgs)
 import Text.JSON.Generic
 
@@ -41,21 +41,21 @@ huntServer :: IO ()
 huntServer = do
     args <- map read <$> getArgs
     -- create the map
-    caveMap :: CaveMap
-    caveMap <- [BatRm, PitRm, WumpusRm, Empty, Empty,
-                Empty, Empty, BatRm, PitRm , Empty,
-                BatRm, Empty, PitRm, Empty, Empty,
-                Empty, Empty, Empty, PitRm, Empty]
-    --gen <- getStdGen
-    --num <- return (fst $ randomR (1,10) gen :: Int)
+    --caveMap :: CaveMap
+    --caveMap <- [BatRm, PitRm, WumpusRm, Empty, Empty,
+    --            Empty, Empty, BatRm, PitRm , Empty,
+    --            BatRm, Empty, PitRm, Empty, Empty,
+    --            Empty, Empty, Empty, PitRm, Empty]
+    gen <- getStdGen
+    num <- return (fst $ randomR (1,10) gen :: Int)
     let port = if null args then 2018 else head args
-    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleGuess (Guess num)
+    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleGuess num
 
-handleGuess :: Guess -> Handler String
+handleGuess :: Int -> Handler String
 handleGuess n addr url req =
     if userGuess == n
-    then return $ sendText OK ("You win! The number is " ++ (show $ guess userGuess) ++ "!\n")
-    else return $ sendText OK ("Try again... the number is not " ++ (show $ guess userGuess) ++ "\n")
+    then return $ sendText OK ("You win! The number is " ++ (show $ userGuess) ++ "!\n")
+    else return $ sendText OK ("Try again... the number is not " ++ (show $ userGuess) ++ "\n")
   where userGuess = decodeJSON $ rqBody req
 
 sendText :: StatusCode -> String -> Response String
