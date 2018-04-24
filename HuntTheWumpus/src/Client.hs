@@ -21,15 +21,17 @@ huntClient args = clientStart serverURI
 
 clientStart :: URI -> IO ()
 clientStart uri = do
-    startGame <- promptStart
-    if (startGame == "y")
-      then putStr "Welcome to the game"
-      else (if (startGame == "i")
-              then (putStr "Instructions: \n \
-                             \ You have 1 arrow that can shoot down a path of 5 rooms. \n \
-                             \ You will be prompted with the rooms that it will travel. \n \
-                             \ Enter \"y\" to start. \n " )
-              else putStr "Invalid command")
+    g <- promptStart
+    msg <- submitGuess g uri
+    putStrLn msg
+    -- if (startGame == "y")
+    --   then putStr "Welcome to the game"
+    --   else (if (startGame == "i")
+    --           then (putStr "Instructions: \n \
+    --                          \ You have 1 arrow that can shoot down a path of 5 rooms. \n \
+    --                          \ You will be prompted with the rooms that it will travel. \n \
+    --                          \ Enter \"y\" to start. \n " )
+    --           else putStr "Invalid command")
 
 --clientLoop :: URI -> IO ()
 --clientLoop uri = do
@@ -49,6 +51,7 @@ promptStart =
           \ Are you ready to hunt? \n \
           \ Enter \"y\" to start. \n \
           \ Enter \"i\" for more instructions." >> hFlush stdout >> getLine
+--Asks user for input
 
 --showInstructions :: I
 --showInstructions = putStrLn "Instructions: \n" ++
@@ -57,7 +60,7 @@ promptStart =
 --                           "Enter \"y\" to start. \n " 
                            -- >> hFlush stdout >> getLine
 
-submitGuess :: Guess -> URI -> IO String
+submitGuess :: String -> URI -> IO String
 submitGuess g uri = do
     let rq = setRequestBody (mkRequest POST uri)
                             ("text/json",encodeJSON g)

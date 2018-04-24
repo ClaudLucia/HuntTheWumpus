@@ -46,17 +46,23 @@ huntServer = do
     --            Empty, Empty, BatRm, PitRm , Empty,
     --            BatRm, Empty, PitRm, Empty, Empty,
     --            Empty, Empty, Empty, PitRm, Empty]
-    gen <- getStdGen
-    num <- return (fst $ randomR (1,10) gen :: Int)
+    -- gen <- getStdGen
+    -- num <- return (fst $ randomR (1,10) gen :: Int)
     let port = if null args then 2018 else head args
-    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleGuess num
+    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleGuess --num
 
-handleGuess :: Int -> Handler String
-handleGuess n addr url req =
-    if userGuess == n
-    then return $ sendText OK ("You win! The number is " ++ (show $ userGuess) ++ "!\n")
-    else return $ sendText OK ("Try again... the number is not " ++ (show $ userGuess) ++ "\n")
-  where userGuess = decodeJSON $ rqBody req
+handleGuess :: Handler String
+handleGuess addr url req =
+    if userCMD == "y"
+    then return $ sendText OK ("Game Started ")
+    --else return $ sendText OK ("Try again... the number is not " ++ (show $ userCMD) ++ "\n")
+    else (if (userCMD == "i")
+              then (return $ sendText OK( "Instructions: \n \
+                             \ You have 1 arrow that can shoot down a path of 5 rooms. \n \
+                             \ You will be prompted with the rooms that it will travel. \n \
+                             \ Enter \"y\" to start. \n " ))
+              else return $ sendText OK ("Invalid command"))
+  where userCMD = decodeJSON $ rqBody req
 
 sendText :: StatusCode -> String -> Response String
 sendText s v = insertHeader HdrContentLength (show (length txt))
