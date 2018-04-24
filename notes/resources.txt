@@ -1,1 +1,4 @@
 https://lettier.github.io/posts/2016-07-15-building-a-haskell-web-api.html
+
+https://practicingruby.com/articles/wumpus
+https://raw.githubusercontent.com/elm-city-craftworks/wumpus/reference_implementation/data/dodecahedron.json
