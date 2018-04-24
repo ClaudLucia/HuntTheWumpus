@@ -72,3 +72,14 @@ sendText s v = insertHeader HdrContentLength (show (length txt))
   where
     txt = encodeString v
 
+--functions needed:
+--handle shoot
+--room numbers
+--handle commands(shoot and move, bats and pit)
+  --if command = shoot 
+      --then handle shoot rm
+      --else (if command = move 
+               --then user location = rm
+                 --else sendText "invalid command")
+--handle initial(y and i)
+--move user to random room
