@@ -23,6 +23,7 @@ library
                      , network-uri >= 2.6.1
                      , utf8-string
                      , HTTP
+                     , bytestring
   default-language:    Haskell2010
 
 executable HuntTheWumpus-Server
