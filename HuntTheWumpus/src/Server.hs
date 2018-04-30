@@ -64,7 +64,7 @@ huntServer = do
     serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleCmd roomNum
 
 
-handleCmd :: Int -> Handler String
+--handleCmd :: Int -> Handler String
 -- handleGuess addr url req =
 --     if (head userCMD) == "start"
 --       then (if (last userCMD) == "y"
@@ -105,12 +105,6 @@ handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You a
 
 printRooms :: [Int] -> String
 printRooms (x:xs) = (show x) ++ printRooms xs
-
-
-type Action = String -> command
-defAction :: Action
-defAction _ = OK ("Invalid command")
-
 
 
 
