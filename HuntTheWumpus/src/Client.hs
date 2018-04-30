@@ -60,7 +60,7 @@ clientStart uri = do
     let input = UserInput 4 "welcome" "starts" g
     rsp <- submitGuess input uri
     clientLoop uri rsp
-
+    
 clientLoop :: URI -> String -> IO ()
 clientLoop uri rsp = do
     command <- putStr (msg response) >> hFlush stdout >> getLine

@@ -80,8 +80,9 @@ handleCmd addr url req | ((stage input) == "welcome") = if ((value input) == "y"
 handleMove :: Int -> Int -> String
 handleMove roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
                                                                        ++ show roomNum
-                                                                       ++ " Tunnel leads to "
-                                                                      --  ++ (printRooms (paths !! (roomNum-1)))
+                                                                       ++ "Tunnel leads to "
+                                                                       -- ++ (printRooms (paths !! (roomNum-1)))
+                            | roomNum `elem` [1,8,12,19]               = "You fell in the pit!"
                             | otherwise = "Invalid move"
 
 handleShoot :: Int -> Int -> String
@@ -94,13 +95,8 @@ handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You a
 printRooms :: [Int] -> String
 printRooms (x:xs) = (show x) ++ printRooms xs
 
-
--- type Action = String -> command
--- defAction :: Action
--- defAction _ = OK ("Invalid command")
-
-
-
+-- pitFall :: Int -> Int -> String
+-- pitFall roomNum currRoom | roomNum `elem` [1,8,12,19] = "You fell in the pit!"
 
 sendText :: StatusCode -> ServerMsg -> Response String
 sendText s v = insertHeader HdrContentLength (show (length txt))
@@ -115,6 +111,7 @@ sendText s v = insertHeader HdrContentLength (show (length txt))
 --handle shoot
 --room numbers
 --handle commands(shoot and move, bats and pit)
+--pitFall
   --if command = shoot 
       --then handle shoot rm
       --else (if command = move 
