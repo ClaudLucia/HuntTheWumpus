@@ -29,7 +29,6 @@ data Room = Empty | Bat | Pit | Wumpus
   deriving (Eq,Data,Typeable)
 
 
-
 data UserInput = UserInput {stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
 
 -- create the map
@@ -68,7 +67,7 @@ huntServer = do
 -- handleGuess addr url req =
 --     if (head userCMD) == "start"
 --       then (if (last userCMD) == "y"
---               then return $ sendText OK ("Game Started ")
+--               then return $ sendText OK ("Game Started")
 --               --else return $ sendText OK ("Try again... the number is not " ++ (show $ userCMD) ++ "\n")
 --               else (if ((last userCMD) == "i")
 --                         then (return $ sendText OK( "Instructions: \n \
@@ -78,22 +77,30 @@ huntServer = do
 --                         else return $ sendText OK ("Invalid command")))
 --       else 
 --   where userCMD = decodeJSON $ rqBody req
+
+
 handleCmd roomNum addr url req | (stage input) == "welcome" = if ((value input) == "y")
                                                                 then return $ sendText OK (handleMove 1 2 ++ (command input)) 
                                                                 else return $ sendText OK ("Invalid command")
                                | (stage input) == "game"    = if ((command input) == "move")
                                                                 then return $ sendText OK (handleMove roomNum (read (value input)) ++ (command input) )
+                                                                --     if (roomNum `elem` [1,8,12,19])
+                                                                --         then return $ sendText OK ("You fell in the pit!")
                                                                 else (if ((command input) == "shoot")
                                                                         then return $ sendText OK (handleShoot roomNum (read(value input)) ++ (command input))
                                                                         else return $ sendText OK ("Invalid command"))
-                               | otherwise                = return $ sendText OK ("huh")
+                                                                 
+                               -- | (stage input) == "lose"   = if ((command input) == "move")
+                               --                                 then 
+                               | otherwise                  = return $ sendText OK ("huh")
   where input = decodeJSON $ rqBody req
 
 handleMove :: Int -> Int -> String
 handleMove roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
                                                                        ++ show roomNum
-                                                                      --  ++ "Tunnel leads to "
-                                                                      --  ++ (printRooms (paths !! (roomNum-1)))
+                                                                       ++ "Tunnel leads to "
+                                                                       ++ (printRooms (paths !! (roomNum-1)))
+                            | roomNum `elem` [1,8,12,19]               = "You fell in the pit!"
                             | otherwise = "Invalid move"
 
 handleShoot :: Int -> Int -> String
@@ -106,7 +113,8 @@ handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You a
 printRooms :: [Int] -> String
 printRooms (x:xs) = (show x) ++ printRooms xs
 
-
+-- pitFall :: Int -> Int -> String
+-- pitFall roomNum currRoom | roomNum `elem` [1,8,12,19] = "You fell in the pit!"
 
 sendText :: StatusCode -> String -> Response String
 sendText s v = insertHeader HdrContentLength (show (length txt))
@@ -121,6 +129,7 @@ sendText s v = insertHeader HdrContentLength (show (length txt))
 --handle shoot
 --room numbers
 --handle commands(shoot and move, bats and pit)
+--pitFall
   --if command = shoot 
       --then handle shoot rm
       --else (if command = move 
