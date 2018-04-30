@@ -28,8 +28,8 @@ type CaveMap = [Room]
 data Room = Empty | Bat | Pit | Wumpus
   deriving (Eq,Data,Typeable)
 
-
-data UserInput = UserInput {stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
+data UserInput = UserInput {currRoom::Int, stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
+data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeable,Show)
 
 -- create the map
 caveMap :: CaveMap
@@ -57,49 +57,31 @@ paths = [[2,8,5],    [1,3,10],   [2,4,12],  [3,5,14],
 huntServer :: IO ()
 huntServer = do
     args <- map read <$> getArgs
-    gen <- getStdGen
-    roomNum <- return (fst $ randomR (1,20) gen :: Int)
     let port = if null args then 2018 else head args
-    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleCmd roomNum
+    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleCmd
 
 
---handleCmd :: Int -> Handler String
--- handleGuess addr url req =
---     if (head userCMD) == "start"
---       then (if (last userCMD) == "y"
---               then return $ sendText OK ("Game Started")
---               --else return $ sendText OK ("Try again... the number is not " ++ (show $ userCMD) ++ "\n")
---               else (if ((last userCMD) == "i")
---                         then (return $ sendText OK( "Instructions: \n \
---                                       \ You have 1 arrow that can shoot down a path of 5 rooms. \n \
---                                       \ You will be prompted with the rooms that it will travel. \n \
---                                       \ Enter \"y\" to start. \n " ))
---                         else return $ sendText OK ("Invalid command")))
---       else 
---   where userCMD = decodeJSON $ rqBody req
-
-
-handleCmd roomNum addr url req | (stage input) == "welcome" = if ((value input) == "y")
-                                                                then return $ sendText OK (handleMove 1 2 ++ (command input)) 
-                                                                else return $ sendText OK ("Invalid command")
-                               | (stage input) == "game"    = if ((command input) == "move")
-                                                                then return $ sendText OK (handleMove roomNum (read (value input)) ++ (command input) )
-                                                                --     if (roomNum `elem` [1,8,12,19])
-                                                                --         then return $ sendText OK ("You fell in the pit!")
-                                                                else (if ((command input) == "shoot")
-                                                                        then return $ sendText OK (handleShoot roomNum (read(value input)) ++ (command input))
-                                                                        else return $ sendText OK ("Invalid command"))
-                                                                 
-                               -- | (stage input) == "lose"   = if ((command input) == "move")
-                               --                                 then 
-                               | otherwise                  = return $ sendText OK ("huh")
+handleCmd :: Handler String
+handleCmd addr url req | ((stage input) == "welcome") = if ((value input) == "y")
+                                                        then return $ sendText OK (ServerMsg 4 ((handleMove 4 5) ++ (stage input)))
+                                                        else return $ sendText OK (ServerMsg 4 "Invalid command")
+                        | ((stage input) == "game"  ) = if ((command input) == "move")
+                                                        then return $ sendText OK (ServerMsg (read (value input)) 
+                                                                                              (handleMove (currRoom input) 
+                                                                                                          (read (value input)) ++ (stage input)))
+                                                        else (if ((command input) == "shoot")
+                                                                then return $ sendText OK (ServerMsg (read (value input)) 
+                                                                                                      (handleMove (currRoom input) 
+                                                                                                                (read (value input))))
+                                                                else return $ sendText OK (ServerMsg (read (value input)) "Invalid command"))
+                        | otherwise                   = return $ sendText OK (ServerMsg (read (value input)) "huh")
   where input = decodeJSON $ rqBody req
 
 handleMove :: Int -> Int -> String
 handleMove roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
                                                                        ++ show roomNum
                                                                        ++ "Tunnel leads to "
-                                                                       ++ (printRooms (paths !! (roomNum-1)))
+                                                                       -- ++ (printRooms (paths !! (roomNum-1)))
                             | roomNum `elem` [1,8,12,19]               = "You fell in the pit!"
                             | otherwise = "Invalid move"
 
@@ -116,13 +98,13 @@ printRooms (x:xs) = (show x) ++ printRooms xs
 -- pitFall :: Int -> Int -> String
 -- pitFall roomNum currRoom | roomNum `elem` [1,8,12,19] = "You fell in the pit!"
 
-sendText :: StatusCode -> String -> Response String
+sendText :: StatusCode -> ServerMsg -> Response String
 sendText s v = insertHeader HdrContentLength (show (length txt))
              $ insertHeader HdrContentEncoding "UTF-8"
-             $ insertHeader HdrContentEncoding "text/plain"
+             $ insertHeader HdrContentEncoding "application/json"
              $ (respond s :: Response String) { rspBody = txt }
   where
-    --txt = encodeString v
+    -- txt = encodeString v
     txt = encodeJSON v
 
 --functions needed:
