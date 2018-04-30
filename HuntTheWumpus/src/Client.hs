@@ -64,8 +64,8 @@ clientLoop uri msg = do
     command <- putStr msg >> hFlush stdout >> getLine
     let usrCmd = words command
     let usrinput2 = UserInput "game" (head usrCmd) (last usrCmd)
-    let newMsg = submitGuess usrinput2 uri
-    clientLoop uri msg
+    newMsg <- submitGuess usrinput2 uri
+    clientLoop uri newMsg
     -- promptGame :: IO String
 
 promptStart :: IO String
