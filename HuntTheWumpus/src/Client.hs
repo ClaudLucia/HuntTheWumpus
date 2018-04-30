@@ -11,7 +11,9 @@ import System.IO
 import Text.JSON.Generic
 
 -- data Guess = Guess { guess :: Int } deriving (Eq,Data,Typeable,Show)
-data UserInput = UserInput {stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
+data UserInput = UserInput {currRoom::Int, stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
+data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeable,Show)
+
 welcome :: String
 welcome = "Welcome to Hunt the Wumpus. \n \
             \-------------------------\n\
@@ -55,17 +57,19 @@ huntClient args = clientStart serverURI
 clientStart :: URI -> IO ()
 clientStart uri = do
     g <- promptStart
-    let input = UserInput "welcome" "starts" g
-    msg <- submitGuess input uri
-    clientLoop uri msg
+    let input = UserInput 4 "welcome" "starts" g
+    rsp <- submitGuess input uri
+    clientLoop uri rsp
 
 clientLoop :: URI -> String -> IO ()
-clientLoop uri msg = do
-    command <- putStr msg >> hFlush stdout >> getLine
+clientLoop uri rsp = do
+    command <- putStr (msg response) >> hFlush stdout >> getLine
     let usrCmd = words command
-    let usrinput2 = UserInput "game" (head usrCmd) (last usrCmd)
-    newMsg <- submitGuess usrinput2 uri
-    clientLoop uri newMsg
+    let usrinput2 = UserInput (newRoom response) "game" (head usrCmd) (last usrCmd)
+    newRsp <- submitGuess usrinput2 uri
+    clientLoop uri newRsp
+  where 
+    response = decodeJSON rsp
     -- promptGame :: IO String
 
 promptStart :: IO String
