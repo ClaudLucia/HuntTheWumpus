@@ -58,21 +58,14 @@ clientStart uri = do
     let input = UserInput "welcome" "start" g
     msg <- submitGuess input uri
     clientLoop uri msg
-    -- if (startGame == "y")
-    --   then putStr "Welcome to the game"
-    --   else (if (startGame == "i")
-    --           then (putStr "Instructions: \n \
-    --                          \ You have 1 arrow that can shoot down a path of 5 rooms. \n \
-    --                          \ You will be prompted with the rooms that it will travel. \n \
-    --                          \ Enter \"y\" to start. \n " )
-    --           else putStr "Invalid command")
 
 clientLoop :: URI -> String -> IO ()
-clientLoop uri msg= do
-    command <- putStr msg >> hFlush stdout >> getLine
-    let usrCmd = words command
-    let input2 = UserInput "game" (head usrCmd) (last usrCmd)
-    newMsg <- submitGuess input2 uri
+clientLoop uri msg =
+    putStr msg
+    command = getLine
+    usrCmd = words command
+    input2 = UserInput "game" (head usrCmd) (last usrCmd)
+    newMsg = submitGuess input2 uri
     clientLoop uri msg
     -- promptGame :: IO String
 
