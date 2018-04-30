@@ -64,15 +64,7 @@ huntServer = do
     serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleCmd roomNum
 
 
-<<<<<<< HEAD
-
-
-
-
-handleGuess :: Handler String
-=======
 handleCmd :: Int -> Handler String
->>>>>>> fed83b562bb4c2090b5b165e0bb44912d767fdf5
 -- handleGuess addr url req =
 --     if (head userCMD) == "start"
 --       then (if (last userCMD) == "y"
@@ -86,36 +78,6 @@ handleCmd :: Int -> Handler String
 --                         else return $ sendText OK ("Invalid command")))
 --       else 
 --   where userCMD = decodeJSON $ rqBody req
-<<<<<<< HEAD
-handleGuess addr url req | (stage input) == "welcome" = if ((value input) == "y")
-                                                        then return $ sendText OK ("Game Started ") 
-                                                        else (if ((value input) == "i")
-                                                                then (return $ sendText OK( "Instructions: \n \
-                                                                              \ This is a 1-player game. You are the player, who has &#x000A;\n \
-                                                                              \ been placed in a random room in a cave containing 20 rooms. \n \
-                                                                              \ You see three tunnels to other rooms that are either 0x0A. \n \
-                                                                              \ a) just like this one with nothing \r\n \
-                                                                              \ b) contains bats that will transport you to a random room\n \
-                                                                              \ c) contains a bottomless pit, in which you will fall into and die\n \
-                                                                              \ d) contains a wumpus that will eat you alive\n \
-                                                                              \  To win the game, you have to find and kill the wumpus before\n \
-                                                                              \ it finds you. You have three special abilities:\n \
-                                                                              \ 1) Smell - you can smell the smelly wumpus that is in one of the\n \
-                                                                              \            adjacent rooms\n \
-                                                                              \ 2) Feel  - you can feel the cool breeze from the bottomless pit\n \
-                                                                              \            that is in one of the adjcaent rooms\n \
-                                                                              \ 3) Hear  - you can hear the bats that are in one of the adjacent\n \
-                                                                              \            rooms\n \
-                                                                              \ You also have a special crooked arrow that you will use to kill the\n \
-                                                                              \ wumpus. This special arrow can travel down a max number of 5 rooms\n \
-                                                                              \ from your current room.\n \
-                                                                              \ Every turn you can enter the following commands to:\n \
-                                                                              \ a) move # - where # is the one of the three adjacent rooms\n \
-                                                                              \ b) shoot # - where # is the first room that the crooked arrow will go\n \
-                                                                              \  Are you ready to hunt the wumpus? Enter [y] to begin" ))
-                                                                else return $ sendText OK ("Invalid command"))
-                         | otherwise                = return $ sendText OK ("huh")
-=======
 handleCmd roomNum addr url req | (stage input) == "welcome" = if ((value input) == "y")
                                                                 then return $ sendText OK (handleMove 1 2 ++ (command input)) 
                                                                 else return $ sendText OK ("Invalid command")
@@ -125,7 +87,6 @@ handleCmd roomNum addr url req | (stage input) == "welcome" = if ((value input) 
                                                                         then return $ sendText OK (handleShoot roomNum (read(value input)) ++ (command input))
                                                                         else return $ sendText OK ("Invalid command"))
                                | otherwise                = return $ sendText OK ("huh")
->>>>>>> fed83b562bb4c2090b5b165e0bb44912d767fdf5
   where input = decodeJSON $ rqBody req
 
 handleMove :: Int -> Int -> String
