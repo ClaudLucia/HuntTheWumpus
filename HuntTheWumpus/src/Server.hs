@@ -28,6 +28,8 @@ type CaveMap = [Room]
 data Room = Empty | Bat | Pit | Wumpus
   deriving (Eq,Data,Typeable)
 
+
+
 data UserInput = UserInput {stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
 
 -- create the map
