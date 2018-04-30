@@ -2,3 +2,5 @@ https://lettier.github.io/posts/2016-07-15-building-a-haskell-web-api.html
 
 https://practicingruby.com/articles/wumpus
 https://raw.githubusercontent.com/elm-city-craftworks/wumpus/reference_implementation/data/dodecahedron.json
+
+http://hackage.haskell.org/package/labyrinth-0.5.0.0/src/src/Labyrinth/Map.hs
