@@ -85,7 +85,7 @@ handleCmd :: Int -> Handler String
 --                                                                         then return $ sendText OK (handleShoot roomNum (read(value input)) ++ (command input))
 --                                                                         else return $ sendText OK ("Invalid command"))
 --                                | otherwise                = return $ sendText OK ("huh")
-handleCmd roomNum addr url req = return $ sendText OK ((stage input) ++ (command input) ++ (value input))
+handleCmd roomNum addr url req = return $ sendText OK ("hello" ++ (stage input) ++ (command input) ++ (value input))
   where input = decodeJSON $ rqBody req
 
 handleMove :: Int -> Int -> String
