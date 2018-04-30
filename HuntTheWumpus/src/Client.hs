@@ -58,16 +58,17 @@ clientStart uri = do
     let input = UserInput "welcome" "start" g
     msg <- submitGuess input uri
     putStr msg
-    clientLoop uri msg
+--     clientLoop uri
 
-clientLoop :: URI -> IO ()
-clientLoop uri = do
-    command <- getLine
-    let usrCmd = words command
-    let input2 = UserInput "game" (head usrCmd) (last usrCmd)
-    newMsg <- submitGuess input2 uri
-    putStr newMsg
-    clientLoop uri
+-- clientLoop :: URI -> IO ()
+-- clientLoop uri = do
+--     command <- getLine
+--     let usrCmd = words command
+--     let input2 = UserInput "game" (head usrCmd) (last usrCmd)
+--     putStr ("um " ++ show input2)
+    -- newMsg <- submitGuess input2 uri
+    -- putStr newMsg
+    -- clientLoop uri
     -- promptGame :: IO String
 
 promptStart :: IO String

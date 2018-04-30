@@ -76,21 +76,21 @@ handleCmd :: Int -> Handler String
 --                         else return $ sendText OK ("Invalid command")))
 --       else 
 --   where userCMD = decodeJSON $ rqBody req
--- handleCmd roomNum addr url req | (stage input) == "welcome" = if ((value input) == "y")
---                                                                 then return $ sendText OK (handleMove 1 2 ++ (command input)) 
---                                                                 else return $ sendText OK ("Invalid command")
---                                | (stage input) == "game"    = if ((command input) == "move")
---                                                                 then return $ sendText OK (handleMove roomNum (read (value input)) ++ (command input) )
---                                                                 else (if ((command input) == "shoot")
---                                                                         then return $ sendText OK (handleShoot roomNum (read(value input)) ++ (command input))
---                                                                         else return $ sendText OK ("Invalid command"))
---                                | otherwise                = return $ sendText OK ("huh")
-handleCmd roomNum addr url req = return $ sendText OK ("hello" ++ (stage input) ++ (command input) ++ (value input))
+handleCmd roomNum addr url req | (stage input) == "welcome" = if ((value input) == "y")
+                                                                then return $ sendText OK (handleMove 1 2 ++ (command input)) 
+                                                                else return $ sendText OK ("Invalid command")
+                               | (stage input) == "game"    = if ((command input) == "move")
+                                                                then return $ sendText OK (handleMove roomNum (read (value input)) ++ (command input) )
+                                                                else (if ((command input) == "shoot")
+                                                                        then return $ sendText OK (handleShoot roomNum (read(value input)) ++ (command input))
+                                                                        else return $ sendText OK ("Invalid command"))
+                               | otherwise                = return $ sendText OK ("huh")
+-- handleCmd roomNum addr url req = return $ sendText OK ("hello" ++ (stage input) ++ (command input) ++ (value input))
   where input = decodeJSON $ rqBody req
 
 handleMove :: Int -> Int -> String
 handleMove roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
-                                                                       ++ show roomNum
+                                                                        ++ show roomNum
                                                                       --  ++ "Tunnel leads to "
                                                                       --  ++ (printRooms (paths !! (roomNum-1)))
                             | otherwise = "Invalid move"
