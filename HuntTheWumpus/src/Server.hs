@@ -28,32 +28,6 @@ type CaveMap = [Room]
 data Room = Empty | Bat | Pit | Wumpus
   deriving (Eq,Data,Typeable)
 
-caveMap :: Map
-caveMap = 
-  let 
-    1 = BatRm
-    2 = Empty
-    3 = PitRm
-    4 = Empty
-    5 = Empty
-    6 = Empty
-    7 = BatRm
-    8 = PitRm
-    9 = Empty
-    10 = BatRm
-    11 = Empty
-    12 = PitRm
-    13 = Empty
-    14 = Empty
-    15 = WumpusRm
-    16 = Empty
-    17 = Empty
-    18 = PitRm
-    19 = Empty
-    20 = Empty
-
-
-
 data UserInput = UserInput {stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
 
 -- create the map
