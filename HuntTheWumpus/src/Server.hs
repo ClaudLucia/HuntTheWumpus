@@ -56,30 +56,15 @@ paths = [[2,8,5],    [1,3,10],   [2,4,12],  [3,5,14],
 huntServer :: IO ()
 huntServer = do
     args <- map read <$> getArgs
-    gen <- getStdGen
-    roomNum <- return (fst $ randomR (1,20) gen :: Int)
     let port = if null args then 2018 else head args
-    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleCmd roomNum
+    serverWith defaultConfig { srvLog = stdLogger, srvPort = port } $ handleCmd 5
 
 
 handleCmd :: Int -> Handler String
--- handleGuess addr url req =
---     if (head userCMD) == "start"
---       then (if (last userCMD) == "y"
---               then return $ sendText OK ("Game Started ")
---               --else return $ sendText OK ("Try again... the number is not " ++ (show $ userCMD) ++ "\n")
---               else (if ((last userCMD) == "i")
---                         then (return $ sendText OK( "Instructions: \n \
---                                       \ You have 1 arrow that can shoot down a path of 5 rooms. \n \
---                                       \ You will be prompted with the rooms that it will travel. \n \
---                                       \ Enter \"y\" to start. \n " ))
---                         else return $ sendText OK ("Invalid command")))
---       else 
---   where userCMD = decodeJSON $ rqBody req
-handleCmd roomNum addr url req | (stage input) == "welcome" = if ((value input) == "y")
-                                                                then return $ sendText OK (handleMove 1 2 ++ (command input)) 
-                                                                else return $ sendText OK ("Invalid command")
-                               | (stage input) == "game"    = if ((command input) == "move")
+handleCmd roomNum addr url req | ((stage input) == "welcome") = if ((value input) == "y")
+                                                                then return $ sendText OK (handleMove roomNum 4 ++ (stage input)) 
+                                                                else return $ sendText OK ("Invalis d command")
+                               | ((stage input) == "game"   ) = if ((command input) == "move")
                                                                 then return $ sendText OK (handleMove roomNum (read (value input)) ++ (command input) )
                                                                 else (if ((command input) == "shoot")
                                                                         then return $ sendText OK (handleShoot roomNum (read(value input)) ++ (command input))
@@ -105,9 +90,9 @@ printRooms :: [Int] -> String
 printRooms (x:xs) = (show x) ++ printRooms xs
 
 
-type Action = String -> command
-defAction :: Action
-defAction _ = OK ("Invalid command")
+-- type Action = String -> command
+-- defAction :: Action
+-- defAction _ = OK ("Invalid command")
 
 
 
