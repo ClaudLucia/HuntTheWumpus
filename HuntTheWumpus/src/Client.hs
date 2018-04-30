@@ -11,7 +11,7 @@ import System.IO
 import Text.JSON.Generic
 
 -- data Guess = Guess { guess :: Int } deriving (Eq,Data,Typeable,Show)
-data userInput = userInput {stage::String, command::String, value::String}
+data UserInput = UserInput {stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
 
 huntClient :: [String] -> IO ()
 huntClient args = clientStart serverURI
@@ -23,7 +23,7 @@ huntClient args = clientStart serverURI
 clientStart :: URI -> IO ()
 clientStart uri = do
     g <- promptStart
-    let input = userInput "welcome" "start" g
+    let input = UserInput "welcome" "start" g
     msg <- submitGuess input uri
     putStrLn msg
     -- if (startGame == "y")
@@ -35,11 +35,6 @@ clientStart uri = do
     --                          \ Enter \"y\" to start. \n " )
     --           else putStr "Invalid command")
 
-clientInst uri = do
-    g <- promptStart
-    let input = (,("start ":[]) ++ (g:[]))
-    msg <- submitGuess input uri
-    putStrLn msg
 --clientLoop :: URI -> IO ()
 --clientLoop uri = do
     --g   <- promptStart
@@ -57,7 +52,7 @@ promptStart =
           \ him with your arrow before he finds and eats you. \n \
           \ Are you ready to hunt? \n \
           \ Enter \"y\" to start. \n \
-          \ Enter \"i\" for more instructions." >> hFlush stdout >> getLine
+          \ Enter \"i\" for more instructions. \n" >> hFlush stdout >> getLine
 --Asks user for input
 
 --showInstructions :: I
@@ -67,7 +62,7 @@ promptStart =
 --                           "Enter \"y\" to start. \n " 
                            -- >> hFlush stdout >> getLine
 
-submitGuess :: [String] -> URI -> IO String
+submitGuess :: UserInput -> URI -> IO String
 submitGuess g uri = do
     let rq = setRequestBody (mkRequest POST uri)
                             ("text/json",encodeJSON g)
