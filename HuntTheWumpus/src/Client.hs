@@ -17,35 +17,12 @@ data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeabl
 welcome :: String
 welcome = "Welcome to Hunt the Wumpus. \n \
             \-------------------------\n\
-            \ You have been brought to Room 4 in a cave with 20 rooms. \n \
-            \ Some have bats and some have a deep pit. \n \
-            \ The Wumpus is also in one of them. Find where he is and shoot \n \
-            \ him with your arrow before he finds and eats you. \n\n"
-instructions :: String;
-instructions = "Instructions: \n\
-                \-------------------------\n\
-                \  This is a 1-player game. You are the player, who has \n\
-                \  been placed in a random room in a cave containing 20 rooms.\n\
-                \  \nYou see three tunnels to other rooms that are either \n\ 
-                \  a) just like this one with nothing \n\
-                \  b) contains bats that will transport you to a random room \n\
-                \  c) contains a bottomless pit, in which you will fall into and die \n\
-                \  d) contains a wumpus that will eat you alive \n\
-                \  \nTo win the game, you have to find and kill the wumpus before \n\
-                \  it finds you. You have three special abilities: \n\
-                \  1) Smell - you can smell the smelly wumpus that is in one of the \n\
-                \             adjacent rooms \n\
-                \  2) Feel  - you can feel the cool breeze from the bottomless pit \n\
-                \             that is in one of the adjcaent rooms \n\
-                \  3) Hear  - you can hear the bats that are in one of the adjacent \n\
-                \             rooms \n\
-                \  \nYou also have a special crooked arrow that you will use to kill the \n\
-                \  wumpus. This special arrow can travel down a max number of 5 rooms \n\
-                \  from your current room. \n\
-                \  \nEvery turn you can enter the following commands to: \n\
-                \  a) move # - where # is the one of the three adjacent rooms \n\
-                \  b) shoot # - where # is the first room that the crooked arrow will go \n\
-                \  \nAre you ready to hunt the wumpus? Enter [y] to begin  \n"
+            \ You have been brought to Room 4 in a cave with 20 rooms. \n\
+            \ Some have bats and some have a deep pit. \n\
+            \ The Wumpus is also in one of them. Find where he is and shoot \n\
+            \ him with your arrow before he finds and eats you. \n\
+            \ Enter [y] to begin. \n\
+            \ Enter [i] to view instructions. \n"
 
 huntClient :: [String] -> IO ()
 huntClient args = clientStart serverURI
@@ -56,26 +33,33 @@ huntClient args = clientStart serverURI
 
 clientStart :: URI -> IO ()
 clientStart uri = do
-    g <- promptStart
-    let input = UserInput 4 "welcome" "starts" g
+    usrCmd <- putStr (welcome) >> hFlush stdout >> getLine
+    let input = UserInput 4 "welcome" "starts" usrCmd
     rsp <- submitGuess input uri
-    clientLoop uri rsp
-    
+    if (usrCmd == "i")
+        then clientInstruction uri rsp
+        else clientLoop uri rsp
+
+clientInstruction :: URI -> String -> IO ()
+clientInstruction uri rsp = do
+    usrCmd <- putStr (msg response) >> hFlush stdout >> getLine
+    let input = UserInput 4 "welcome" "starts" usrCmd
+    newRsp <- submitGuess input uri
+    clientLoop uri newRsp
+  where 
+    response = decodeJSON rsp
+
 clientLoop :: URI -> String -> IO ()
 clientLoop uri rsp = do
     command <- putStr (msg response) >> hFlush stdout >> getLine
     let usrCmd = words command
-    let usrinput2 = UserInput (newRoom response) "game" (head usrCmd) (last usrCmd)
-    newRsp <- submitGuess usrinput2 uri
+    let input = UserInput (newRoom response) "game" (head usrCmd) (last usrCmd)
+    newRsp <- submitGuess input uri
     clientLoop uri newRsp
   where 
     response = decodeJSON rsp
     -- promptGame :: IO String
 
-promptStart :: IO String
-promptStart = 
-  putStr (welcome ++ instructions) >> hFlush stdout >> getLine
---Asks user for input
 
 --showInstructions :: I
 --showInstructions = putStrLn "Instructions: \n" ++
