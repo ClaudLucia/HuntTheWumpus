@@ -68,13 +68,13 @@ clientStart uri msg = do
         then clientStart uri instructions
         else clientLoop uri rsp
   where
-    rsp = encodeJSON gameStart
+    rsp = encodeJSON (ServerMsg 4 gameStart)
     
 clientLoop :: URI -> String -> IO ()
 clientLoop uri rsp = do
     command <- putStr (msg response) >> hFlush stdout >> getLine
     let usrCmd = words command
-    let input = UserInput (newRoom response) "game" (head usrCmd) (last usrCmd)
+    let input = UserInput (newRoom response) (head usrCmd) (last usrCmd)
     newRsp <- submitCmd input uri
     clientLoop uri newRsp
   where 

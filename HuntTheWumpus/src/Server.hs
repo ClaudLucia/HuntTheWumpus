@@ -45,16 +45,6 @@ paths = [[2,8,5],    [1,3,10],   [2,4,12],  [3,5,14],
          [10,12,19], [2,9,11],   [8,10,20], [3,9,13],
          [12,14,18], [4,13,15],  [6,14,16], [15,17,18],
          [7,16,20],  [13,16,19], [9,18,20], [11,17,19]]
---data RoomType = BatRm | PitRm | WumpusRm | EmptyRm
---data Room = Room Int RoomType
-
--- instance Show Room where
---   show BatRm    = "BatRm"
---   show PitRm    = "PitRm"
---   show WumpusRm = "WumpusRm"
---   show EmptyRm  = "EmptyRm"
-
-
 
 huntServer :: IO ()
 huntServer = do
@@ -73,14 +63,8 @@ handleCmd addr url req | (command input) == "move"  = return $ sendText OK (Serv
 
 handleMove :: Int -> Int -> String
 handleMove newRoom currRoom | (newRoom `elem` (paths !! (currRoom-1))) = "You are now in room " 
-                                                                          ++ show newRoom
+                                                                          ++ show newRoom ++ "\n"
                                                                           ++ handleRoom newRoom
-
-
-
-                                                                                    ++ ". \nTunnel leads to ")
-                                                                                    ++ (printRooms (paths !! (roomNum-1)))
-                                                                                    ++ "\n"
                             | otherwise = "Invalid move"
 
 handleShoot :: Int -> Int -> String
@@ -91,11 +75,12 @@ handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You a
                             | otherwise = "Invalid move"
 
 handleRoom :: Int -> String
-handleRoom | ( == 3)                   = "You lose! The Wumpus ate you..."
-           | (`elem` [5,9,13,19])      = "You lose! You fell in the pit..."
-           | (`elem` [1,7,11])         = "Oh no. Bats!"
-           | (`elem` [6,8,10,17,20]) = "I hear Bats."
-           | (`elem` [4,6]) = "I hear Bats."
+handleRoom newRoom | (newRoom == 3)                   = "You lose! The Wumpus ate you..."
+                   | (newRoom `elem` [5,9,13,19])      = "You lose! You fell in the pit..."
+                   | (newRoom `elem` [1,7,11])         = "Oh no. Bats!"
+                  --  | (newRoom `elem` [6,8,10,17,20]) = "I hear Bats."
+                  --  | (newRoom `elem` [4,6]) = "I hear Bats."
+                   | otherwise = "Tunnel leads to " ++ (printRooms (paths !! (newRoom-1))) ++ "\n"
            
 
 printRooms :: [Int] -> String
@@ -112,7 +97,6 @@ sendText s v = insertHeader HdrContentLength (show (length txt))
              $ (respond s :: Response String) { rspBody = txt }
   where
     -- txt = encodeString v
-
     txt = encodeJSON v
 
 --functions needed:
