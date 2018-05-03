@@ -65,6 +65,8 @@ handleMove :: Int -> Int -> String
 handleMove newRoom currRoom | (newRoom `elem` (paths !! (currRoom-1))) = "You are now in room " 
                                                                           ++ show newRoom ++ "\n"
                                                                           ++ handleRoom newRoom
+
+                                                       --  ++ (printRooms (paths !! (roomNum-1)))
                             | otherwise = "Invalid move"
 
 handleShoot :: Int -> Int -> String
