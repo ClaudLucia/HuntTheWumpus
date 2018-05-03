@@ -78,8 +78,6 @@ handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You a
                                                                         ++ "Press [y] to continue or [n] to quit"
                              | otherwise                                = "Invalid move"
 
--- handleBat: Int -> Int -> String
--- handleBat roomNum currRoom | roomNum `elem` [0,7,10]                    = currRoom(randomR (0,20))
 
 handleRoom :: Int -> String
 handleRoom newRoom | (newRoom == 3)                   = "You lose! The Wumpus ate you..."
@@ -87,8 +85,14 @@ handleRoom newRoom | (newRoom == 3)                   = "You lose! The Wumpus at
                    | (newRoom `elem` [1,7,11])         = "Oh no. Bats!"
                   --  | (newRoom `elem` [6,8,10,17,20]) = "I hear Bats."
                   --  | (newRoom `elem` [4,6]) = "I hear Bats."
-                   | otherwise = "Tunnel leads to " ++ (printRooms (paths !! (newRoom-1))) ++ "\n"
-           
+                   | otherwise = "Tunnel leads to " ++ (printRooms (paths !! (newRoom-1))) ++ "\n"           
+
+handleBat :: Int -> String
+handleBat newRoom =
+        if newRoom `elem` [1,7,11]
+        then return $ sendText OK ("Oh no! You were picked up by bats")
+        --else return $ sendText Ok ("Tunnel leads to " ++ printRooms(paths !! (newRoom-1)) )
+        where newRoom = (getStdRandom $ randomR (1,20))
 
 printRooms :: [Int] -> String
 printRooms [] = []
