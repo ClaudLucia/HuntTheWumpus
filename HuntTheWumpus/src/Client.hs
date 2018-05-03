@@ -66,19 +66,26 @@ clientStart uri msg = do
     usrCmd <- putStr msg >> hFlush stdout >> getLine
     if (usrCmd == "i")
         then clientStart uri instructions
-        else clientLoop uri rsp
+        else clientLoop uri response
   where
-    rsp = encodeJSON (ServerMsg 4 gameStart)
+    response = ServerMsg 4 gameStart
     
-clientLoop :: URI -> String -> IO ()
-clientLoop uri rsp = do
+clientLoop :: URI -> ServerMsg -> IO ()
+clientLoop uri response = do
     command <- putStr (msg response) >> hFlush stdout >> getLine
     let usrCmd = words command
     let input = UserInput (newRoom response) (head usrCmd) (read (last usrCmd))
     newRsp <- submitCmd input uri
-    clientLoop uri newRsp
-  where 
-    response = decodeJSON rsp
+    checkResult uri newRsp
+
+checkResult :: URI -> String -> IO()
+checkResult uri rsp = do
+    if ((newRoom response) == -1)
+        then putStr (msg response)
+        else clientLoop uri response
+    where 
+        response = decodeJSON rsp
+
 
 submitCmd :: UserInput -> URI -> IO String
 submitCmd g uri = do
