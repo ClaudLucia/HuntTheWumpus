@@ -72,17 +72,30 @@ handleShoot targetRoom currRoom | (targetRoom `elem` (paths !! (currRoom-1))) = 
                                                                                     else (ServerMsg currRoom "No Wumpus was shot. Move or shoot? \n")
                                 | otherwise                                = (ServerMsg currRoom "Invalid room. Move or shoot? \n")
 
-handleBat :: Int -> String
-handleBat newRoom =
-        if newRoom `elem` [1,7,11]
-        then return $ sendText OK ("Oh no! You were picked up by bats")
-        --else return $ sendText Ok ("Tunnel leads to " ++ printRooms(paths !! (newRoom-1)) )
-        where newRoom = (getStdRandom $ randomR (1,20))
+handleBat :: ServerMsg
+handleBat = ServerMsg randRoom ("Oh no! You were picked up by bats")
+                          -- ++ "You are now in room " 
+                          -- ++ show randRoom 
+                          -- ++ "\nTunnel leads to " 
+                          -- ++ (printRooms (paths !! (randRoom-1))) ++ "\n"
+                          -- ++ handleSense randRoom)
+                  where 
+                       randomRIO (0,6)
+
+
+-- getRandom :: Int -> ServerMsg
+-- getRandom = do
+--         gen <- getStdGen
+--         index <- (fst $ randomR (0,6) gen :: Int)
+--         let randRoom = (index !! [1,3,5,7,11,13,19])
+--         handleBat randRoom
+
+        --else return $ sendText Ok ("Tunnel leads to " ++ printRooms(paths !! (newRoom-1)) ) 
 
 handleRoom :: Int -> ServerMsg
-handleRoom newRoom | (newRoom == 3)                   = ServerMsg (-1) "You lose! The Wumpus ate you...\n"
+handleRoom newRoom | (newRoom == 3)                    = ServerMsg (-1) "You lose! The Wumpus ate you...\n"
                    | (newRoom `elem` [5,9,13,19])      = ServerMsg (-1) "You lose! You fell in the pit...\n"
-                   | (newRoom `elem` [1,7,11])         = ServerMsg (newRoom) "Oh no. Bats!\n"
+                   | (newRoom `elem` [1,7,11])         = handleBat
                    | otherwise = ServerMsg (newRoom) ("You are now in room " 
                                                       ++ show newRoom 
                                                       ++ "\nTunnel leads to " 
