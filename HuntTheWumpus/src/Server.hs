@@ -28,7 +28,7 @@ type CaveMap = [Room]
 data Room = Empty | Bat | Pit | Wumpus
   deriving (Eq,Data,Typeable)
 
-data UserInput = UserInput {currRoom::Int, stage::String, command::String, value::Int} deriving (Eq,Data,Typeable,Show)
+data UserInput = UserInput {currRoom::Int, command::String, value::Int} deriving (Eq,Data,Typeable,Show)
 data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeable,Show)
 
 -- create the map

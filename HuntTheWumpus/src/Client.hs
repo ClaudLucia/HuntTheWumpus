@@ -11,7 +11,7 @@ import System.IO
 import Text.JSON.Generic
 
 -- data Guess = Guess { guess :: Int } deriving (Eq,Data,Typeable,Show)
-data UserInput = UserInput {currRoom::Int, command::String, value::String} deriving (Eq,Data,Typeable,Show)
+data UserInput = UserInput {currRoom::Int, command::String, value::Int} deriving (Eq,Data,Typeable,Show)
 data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeable,Show)
 
 welcome :: String
@@ -74,7 +74,7 @@ clientLoop :: URI -> String -> IO ()
 clientLoop uri rsp = do
     command <- putStr (msg response) >> hFlush stdout >> getLine
     let usrCmd = words command
-    let input = UserInput (newRoom response) (head usrCmd) (last usrCmd)
+    let input = UserInput (newRoom response) (head usrCmd) (read (last usrCmd))
     newRsp <- submitCmd input uri
     clientLoop uri newRsp
   where 
