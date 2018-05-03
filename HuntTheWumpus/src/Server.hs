@@ -74,6 +74,10 @@ handleCmd addr url req | ((stage input) == "welcome") = if ((value input) == "y"
                                                                                                       (handleMove (currRoom input) 
                                                                                                                 (read (value input))))
                                                                 else return $ sendText OK (ServerMsg (read (value input)) "Invalid command"))
+                        -- | ((stage input) == "quit") = if ((value input) == "n")
+                        -- | ((stage input) == "game over") = if ((command input) == "move")
+                        --                                         if (roomNum `elem` [1,8,12,19])
+                        --                                              then return $ sendText OK(ServerMsg)
                         | otherwise                   = return $ sendText OK (ServerMsg (read (value input)) "huh")
   where input = decodeJSON $ rqBody req
 
@@ -81,16 +85,31 @@ handleMove :: Int -> Int -> String
 handleMove roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
                                                                        ++ show roomNum
                                                                        ++ "Tunnel leads to "
-                                                                       -- ++ (printRooms (paths !! (roomNum-1)))
-                            | roomNum `elem` [1,8,12,19]               = "You fell in the pit!"
-                            | otherwise = "Invalid move"
+                                                                       ++ (printRooms (paths !! (roomNum-1)))
+                            | roomNum `elem` [1,8,12,18]               = "You are now in room " 
+                                                                       ++ show roomNum
+                                                                       ++ "You fell in the pit!"
+                                                                       ++ "Game Over"
+                            | roomNum == 2                             = "You were eaten by the Wumpus"
+                                                                       ++ "Game Over"
+                                                                       ++ "You couldn't catch the Wumpus"
+                                                                       ++ "Would you like to play again?"
+                                                                       ++ "Press [y] to continue or [n] to quit"
+                            | otherwise                                = "Invalid move"
 
 handleShoot :: Int -> Int -> String
 handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
                                                                         ++ show roomNum
                                                                         ++ "Tunnel leads to "
                                                                         ++ (printRooms (paths !! (roomNum-1)))
-                            | otherwise = "Invalid move"
+                             | roomNum == 2                             = "You killed the Wumpus!"
+                                                                        ++ "Congratulations"
+                                                                        ++ "Would you like to play again?"
+                                                                        ++ "Press [y] to continue or [n] to quit"
+                             | otherwise                                = "Invalid move"
+
+-- handleBat: Int -> Int -> String
+-- handleBat roomNum currRoom | roomNum `elem` [0,7,10]                    = currRoom(randomR (0,20))
 
 printRooms :: [Int] -> String
 printRooms (x:xs) = (show x) ++ printRooms xs

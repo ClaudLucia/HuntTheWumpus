@@ -21,7 +21,7 @@ welcome = "Welcome to Hunt the Wumpus. \n \
             \ Some have bats and some have a deep pit. \n \
             \ The Wumpus is also in one of them. Find where he is and shoot \n \
             \ him with your arrow before he finds and eats you. \n\n"
-instructions :: String;
+instructions :: String
 instructions = "Instructions: \n\
                 \-------------------------\n\
                 \  This is a 1-player game. You are the player, who has \n\
@@ -46,6 +46,13 @@ instructions = "Instructions: \n\
                 \  a) move # - where # is the one of the three adjacent rooms \n\
                 \  b) shoot # - where # is the first room that the crooked arrow will go \n\
                 \  \nAre you ready to hunt the wumpus? Enter [y] to begin  \n"
+
+-- gameOver :: String
+-- gameOver = "Game Over!\n\
+--             \-------------------------\n\
+--              \You couldn't catch the Wumpus...\n\
+--              \ Would you like to play again?\n\
+--              \ Press [y] to continue or [n] to quit\n"
 
 huntClient :: [String] -> IO ()
 huntClient args = clientStart serverURI
