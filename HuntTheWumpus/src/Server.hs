@@ -35,7 +35,7 @@ data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeabl
 caveMap :: CaveMap
 caveMap = [Bat,   Empty, Wumpus, Empty, 
            Pit,   Empty, Bat,    Empty,
-           Pit,   Empty, Bat,    Empty, 
+           Empty, Empty, Bat,    Empty, 
            Pit,   Empty, Empty,  Empty, 
            Empty, Empty, Pit,    Empty]
 
@@ -79,10 +79,17 @@ handleRoom :: Int -> ServerMsg
 handleRoom newRoom | (newRoom == 3)                   = ServerMsg (-1) "You lose! The Wumpus ate you...\n"
                    | (newRoom `elem` [5,9,13,19])      = ServerMsg (-1) "You lose! You fell in the pit...\n"
                    | (newRoom `elem` [1,7,11])         = ServerMsg (newRoom) "Oh no. Bats!\n"
-                  --  | (newRoom `elem` [6,8,10,17,20]) = "I hear Bats."
-                  --  | (newRoom `elem` [4,6]) = "I hear Bats."
-                   | otherwise = ServerMsg (newRoom) ("You are now in room " ++ show newRoom 
-                                                      ++ "\nTunnel leads to " ++ (printRooms (paths !! (newRoom-1))) ++ "\n")
+                   | otherwise = ServerMsg (newRoom) ("You are now in room " 
+                                                      ++ show newRoom 
+                                                      ++ "\nTunnel leads to " 
+                                                      ++ (printRooms (paths !! (newRoom-1))) ++ "\n"
+                                                      ++ handleSense newRoom)
+
+handleSense :: Int -> String
+handleSense roomNum | (roomNum `elem` [2,4,12]) = "I smell the Wumpus.\n"
+                    | (roomNum `elem` [2,8,6,17,10,20]) = "I hear the bats.\n"
+                    | (roomNum `elem` [4,6,14,18,9,20]) = "I feel a breeze.\n"
+                    | otherwise                       = ""
            
 
 printRooms :: [Int] -> String
