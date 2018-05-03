@@ -72,7 +72,14 @@ handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You a
                                                                         ++ show roomNum
                                                                         ++ "Tunnel leads to "
                                                                         ++ (printRooms (paths !! (roomNum-1)))
-                            | otherwise = "Invalid move"
+                             | roomNum == 2                             = "You killed the Wumpus!"
+                                                                        ++ "Congratulations"
+                                                                        ++ "Would you like to play again?"
+                                                                        ++ "Press [y] to continue or [n] to quit"
+                             | otherwise                                = "Invalid move"
+
+-- handleBat: Int -> Int -> String
+-- handleBat roomNum currRoom | roomNum `elem` [0,7,10]                    = currRoom(randomR (0,20))
 
 handleRoom :: Int -> String
 handleRoom newRoom | (newRoom == 3)                   = "You lose! The Wumpus ate you..."
