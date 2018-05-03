@@ -11,17 +11,20 @@ import System.IO
 import Text.JSON.Generic
 
 -- data Guess = Guess { guess :: Int } deriving (Eq,Data,Typeable,Show)
-data UserInput = UserInput {currRoom::Int, stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
+data UserInput = UserInput {currRoom::Int, command::String, value::Int} deriving (Eq,Data,Typeable,Show)
 data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeable,Show)
 
 welcome :: String
 welcome = "Welcome to Hunt the Wumpus. \n \
             \-------------------------\n\
-            \ You have been brought to Room 4 in a cave with 20 rooms. \n \
-            \ Some have bats and some have a deep pit. \n \
-            \ The Wumpus is also in one of them. Find where he is and shoot \n \
-            \ him with your arrow before he finds and eats you. \n\n"
-instructions :: String
+            \ You have been brought to Room 4 in a cave with 20 rooms. \n\
+            \ Some have bats and some have a deep pit. \n\
+            \ The Wumpus is also in one of them. Find where he is and shoot \n\
+            \ him with your arrow before he finds and eats you. \n\
+            \ Enter [y] to begin. \n\
+            \ Enter [i] to view instructions. \n"
+
+instructions :: String;
 instructions = "Instructions: \n\
                 \-------------------------\n\
                 \  This is a 1-player game. You are the player, who has \n\
@@ -47,52 +50,38 @@ instructions = "Instructions: \n\
                 \  b) shoot # - where # is the first room that the crooked arrow will go \n\
                 \  \nAre you ready to hunt the wumpus? Enter [y] to begin  \n"
 
--- gameOver :: String
--- gameOver = "Game Over!\n\
---             \-------------------------\n\
---              \You couldn't catch the Wumpus...\n\
---              \ Would you like to play again?\n\
---              \ Press [y] to continue or [n] to quit\n"
+gameStart :: String;
+gameStart = "You are now in Room 4. \n\
+             \Tunnels lead to 3 5 14. Move or Shoot? \n"
 
 huntClient :: [String] -> IO ()
-huntClient args = clientStart serverURI
+huntClient args = clientStart serverURI welcome
   where
     Just serverURI = case intercalate ":" (take 2 args) of
                        ""  -> parseURI "http://127.0.0.1:2018"  
                        uri -> parseURI ("http://" ++ uri)
 
-clientStart :: URI -> IO ()
-clientStart uri = do
-    g <- promptStart
-    let input = UserInput 4 "welcome" "starts" g
-    rsp <- submitGuess input uri
-    clientLoop uri rsp
+clientStart :: URI -> String -> IO ()
+clientStart uri msg = do
+    usrCmd <- putStr msg >> hFlush stdout >> getLine
+    if (usrCmd == "i")
+        then clientStart uri instructions
+        else clientLoop uri rsp
+  where
+    rsp = encodeJSON (ServerMsg 4 gameStart)
     
 clientLoop :: URI -> String -> IO ()
 clientLoop uri rsp = do
     command <- putStr (msg response) >> hFlush stdout >> getLine
     let usrCmd = words command
-    let usrinput2 = UserInput (newRoom response) "game" (head usrCmd) (last usrCmd)
-    newRsp <- submitGuess usrinput2 uri
+    let input = UserInput (newRoom response) (head usrCmd) (read (last usrCmd))
+    newRsp <- submitCmd input uri
     clientLoop uri newRsp
   where 
     response = decodeJSON rsp
-    -- promptGame :: IO String
 
-promptStart :: IO String
-promptStart = 
-  putStr (welcome ++ instructions) >> hFlush stdout >> getLine
---Asks user for input
-
---showInstructions :: I
---showInstructions = putStrLn "Instructions: \n" ++
---                           "You have 1 arrow that can shoot down a path of 5 rooms. \n" ++
---                           "You will be prompted with the rooms that it will travel. \n" ++
---                           "Enter \"y\" to start. \n " 
-                           -- >> hFlush stdout >> getLine
-
-submitGuess :: UserInput -> URI -> IO String
-submitGuess g uri = do
+submitCmd :: UserInput -> URI -> IO String
+submitCmd g uri = do
     let rq = setRequestBody (mkRequest POST uri)
                             ("text/json",encodeJSON g)
     rsp <- Network.HTTP.simpleHTTP rq

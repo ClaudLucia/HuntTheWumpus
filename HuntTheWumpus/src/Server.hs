@@ -28,15 +28,16 @@ type CaveMap = [Room]
 data Room = Empty | Bat | Pit | Wumpus
   deriving (Eq,Data,Typeable)
 
-data UserInput = UserInput {currRoom::Int, stage::String, command::String, value::String} deriving (Eq,Data,Typeable,Show)
+data UserInput = UserInput {currRoom::Int, command::String, value::Int} deriving (Eq,Data,Typeable,Show)
 data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeable,Show)
 
 -- create the map
 caveMap :: CaveMap
-caveMap = [Bat,   Pit,   Wumpus, Empty, Empty,
-           Empty, Empty, Bat,    Pit,   Empty,
-           Bat,   Empty, Pit,    Empty, Empty,
-           Empty, Empty, Empty,  Pit,   Empty]
+caveMap = [Bat,   Empty, Wumpus, Empty, 
+           Pit,   Empty, Bat,    Empty,
+           Pit,   Empty, Bat,    Empty, 
+           Pit,   Empty, Empty,  Empty, 
+           Empty, Empty, Pit,    Empty]
 
 paths :: [[Int]]
 paths = [[2,8,5],    [1,3,10],   [2,4,12],  [3,5,14],
@@ -44,15 +45,6 @@ paths = [[2,8,5],    [1,3,10],   [2,4,12],  [3,5,14],
          [10,12,19], [2,9,11],   [8,10,20], [3,9,13],
          [12,14,18], [4,13,15],  [6,14,16], [15,17,18],
          [7,16,20],  [13,16,19], [9,18,20], [11,17,19]]
---data RoomType = BatRm | PitRm | WumpusRm | EmptyRm
---data Room = Room Int RoomType
-
--- instance Show Room where
---   show BatRm    = "BatRm"
---   show PitRm    = "PitRm"
---   show WumpusRm = "WumpusRm"
---   show EmptyRm  = "EmptyRm"
-
 
 huntServer :: IO ()
 huntServer = do
@@ -62,43 +54,21 @@ huntServer = do
 
 
 handleCmd :: Handler String
-handleCmd addr url req | ((stage input) == "welcome") = if ((value input) == "y")
-                                                        then return $ sendText OK (ServerMsg 4 ((handleMove 4 5) ++ (stage input)))
-                                                        else return $ sendText OK (ServerMsg 4 "Invalid command")
-                        | ((stage input) == "game"  ) = if ((command input) == "move")
-                                                        then return $ sendText OK (ServerMsg (read (value input)) 
-                                                                                              (handleMove (currRoom input) 
-                                                                                                          (read (value input)) ++ (stage input)))
-                                                        else (if ((command input) == "shoot")
-                                                                then return $ sendText OK (ServerMsg (read (value input)) 
-                                                                                                      (handleMove (currRoom input) 
-                                                                                                                (read (value input))))
-                                                                else return $ sendText OK (ServerMsg (read (value input)) "Invalid command"))
-                        -- | ((stage input) == "quit") = if ((value input) == "n")
-                        -- | ((stage input) == "game over") = if ((command input) == "move")
-                        --                                         if (roomNum `elem` [1,8,12,19])
-                        --                                              then return $ sendText OK(ServerMsg)
-                        | otherwise                   = return $ sendText OK (ServerMsg (read (value input)) "huh")
+handleCmd addr url req | (command input) == "move"  = return $ sendText OK (ServerMsg (value input) 
+                                                                                      (handleMove (value input) (currRoom input)))
+                       | (command input) == "shoot" = return $ sendText OK (ServerMsg (value input) 
+                                                                                      (handleMove (value input) (currRoom input)))
+                       | otherwise                  = return $ sendText OK (ServerMsg (value input) "Invalid command")
   where input = decodeJSON $ rqBody req
 
 handleMove :: Int -> Int -> String
-handleMove roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
-                                                                       ++ show roomNum
-                                                                       ++ "Tunnel leads to "
-                                                                       ++ (printRooms (paths !! (roomNum-1)))
-                            | roomNum `elem` [1,8,12,18]               = "You are now in room " 
-                                                                       ++ show roomNum
-                                                                       ++ "You fell in the pit!"
-                                                                       ++ "Game Over"
-                            | roomNum == 2                             = "You were eaten by the Wumpus"
-                                                                       ++ "Game Over"
-                                                                       ++ "You couldn't catch the Wumpus"
-                                                                       ++ "Would you like to play again?"
-                                                                       ++ "Press [y] to continue or [n] to quit"
-                            | otherwise                                = "Invalid move"
+handleMove newRoom currRoom | (newRoom `elem` (paths !! (currRoom-1))) = "You are now in room " 
+                                                                          ++ show newRoom ++ "\n"
+                                                                          ++ handleRoom newRoom
+                            | otherwise = "Invalid move"
 
 handleShoot :: Int -> Int -> String
-handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room" 
+handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You are now in room. " 
                                                                         ++ show roomNum
                                                                         ++ "Tunnel leads to "
                                                                         ++ (printRooms (paths !! (roomNum-1)))
@@ -111,8 +81,18 @@ handleShoot roomNum currRoom | (roomNum `elem` (paths !! (currRoom-1))) = "You a
 -- handleBat: Int -> Int -> String
 -- handleBat roomNum currRoom | roomNum `elem` [0,7,10]                    = currRoom(randomR (0,20))
 
+handleRoom :: Int -> String
+handleRoom newRoom | (newRoom == 3)                   = "You lose! The Wumpus ate you..."
+                   | (newRoom `elem` [5,9,13,19])      = "You lose! You fell in the pit..."
+                   | (newRoom `elem` [1,7,11])         = "Oh no. Bats!"
+                  --  | (newRoom `elem` [6,8,10,17,20]) = "I hear Bats."
+                  --  | (newRoom `elem` [4,6]) = "I hear Bats."
+                   | otherwise = "Tunnel leads to " ++ (printRooms (paths !! (newRoom-1))) ++ "\n"
+           
+
 printRooms :: [Int] -> String
-printRooms (x:xs) = (show x) ++ printRooms xs
+printRooms [] = []
+printRooms (x:xs) = (show x) ++ " " ++ printRooms xs
 
 -- pitFall :: Int -> Int -> String
 -- pitFall roomNum currRoom | roomNum `elem` [1,8,12,19] = "You fell in the pit!"
