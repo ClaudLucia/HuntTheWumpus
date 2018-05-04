@@ -19,7 +19,7 @@ import Network.HTTP.Server (defaultConfig,
                             StatusCode(OK)
                            )
 import Network.HTTP.Server.Logger (stdLogger)
-import System.Random (getStdGen,randomR,randomIO)
+import System.Random (getStdGen,randomR,randomRIO)
 import System.Environment (getArgs)
 import Text.JSON.Generic
 import Data.List
@@ -72,20 +72,22 @@ handleShoot targetRoom currRoom | (targetRoom `elem` (paths !! (currRoom-1))) = 
                                                                                     else (ServerMsg currRoom "No Wumpus was shot. Move or shoot? \n")
                                 | otherwise                                = (ServerMsg currRoom "Invalid room. Move or shoot? \n")
 
-handleBat :: ServerMsg
-handleBat = ServerMsg randRoom ("Oh no! You were picked up by bats")
-                          -- ++ "You are now in room " 
-                          -- ++ show randRoom 
-                          -- ++ "\nTunnel leads to " 
-                          -- ++ (printRooms (paths !! (randRoom-1))) ++ "\n"
-                          -- ++ handleSense randRoom)
+handleBat :: Int -> ServerMsg
+handleBat batRoom = ServerMsg randRoom ("Oh no! You were picked up by bats\n"
+                                        ++ "You are now in room " 
+                                        ++ show randRoom 
+                                        ++ "\nTunnel leads to " 
+                                        ++ (printRooms (paths !! (randRoom-1))) ++ "\n"
+                                        ++ handleSense randRoom)
   where 
-    randRoom = randomIO (0,6)
+    randRoom = [2,4,6,8,9,10,12,14,15,16,17,18,20] !! randNdx
+      where
+        randNdx = (batRoom+4) `mod` 13
 
 handleRoom :: Int -> ServerMsg
 handleRoom newRoom | (newRoom == 3)                    = ServerMsg (-1) "You lose! The Wumpus ate you...\n"
                    | (newRoom `elem` [5,9,13,19])      = ServerMsg (-1) "You lose! You fell in the pit...\n"
-                   | (newRoom `elem` [1,7,11])         = handleBat
+                   | (newRoom `elem` [1,7,11])         = handleBat newRoom
                    | otherwise = ServerMsg (newRoom) ("You are now in room " 
                                                       ++ show newRoom 
                                                       ++ "\nTunnel leads to " 
