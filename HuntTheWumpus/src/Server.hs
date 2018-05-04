@@ -23,6 +23,7 @@ import System.Environment (getArgs)
 import Text.JSON.Generic
 import Data.List
 
+--create types of rooms
 type CaveMap = [Room]
 data Room = Empty | Bat | Pit | Wumpus
   deriving (Eq,Data,Typeable)
