@@ -10,20 +10,20 @@ import Network.URI
 import System.IO
 import Text.JSON.Generic
 
--- data Guess = Guess { guess :: Int } deriving (Eq,Data,Typeable,Show)
 data UserInput = UserInput {currRoom::Int, command::String, value::Int} deriving (Eq,Data,Typeable,Show)
 data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeable,Show)
 
+--initial message
 welcome :: String
 welcome = "Welcome to Hunt the Wumpus. \n \
             \-------------------------\n\
-            \ You have been brought to Room 4 in a cave with 20 rooms. \n\
+            \ You have been brought to a room in a cave with 20 rooms. \n\
             \ Some have bats and some have a deep pit. \n\
             \ The Wumpus is also in one of them. Find where he is and shoot \n\
             \ him with your arrow before he finds and eats you. \n\
             \ Enter [y] to begin. \n\
             \ Enter [i] to view instructions. \n"
-
+--instruction message
 instructions :: String;
 instructions = "Instructions: \n\
                 \-------------------------\n\
@@ -49,11 +49,12 @@ instructions = "Instructions: \n\
                 \  a) move # - where # is the one of the three adjacent rooms \n\
                 \  b) shoot # - where # is the first room that the crooked arrow will go \n\
                 \  \nAre you ready to hunt the wumpus? Enter [y] to begin  \n"
-
+--initial room
 gameStart :: String;
-gameStart = "You are now in Room 4. \n\
-             \Tunnels lead to 3 5 14. Move or Shoot? \n"
+gameStart = "You are now in Room 16. \n\
+             \Tunnels lead to 15 17 18. Move or Shoot? \n"
 
+--handle user input
 huntClient :: [String] -> IO ()
 huntClient args = clientStart serverURI welcome
   where
@@ -61,23 +62,58 @@ huntClient args = clientStart serverURI welcome
                        ""  -> parseURI "http://127.0.0.1:2018"  
                        uri -> parseURI ("http://" ++ uri)
 
+--initial welcome screen
 clientStart :: URI -> String -> IO ()
 clientStart uri msg = do
     usrCmd <- putStr msg >> hFlush stdout >> getLine
     if (usrCmd == "i")
         then clientStart uri instructions
-        else clientLoop uri response
+        else (if (usrCmd == "y")
+                then clientLoop uri response
+                else clientStart uri "Invalid command.\n\
+                                     \Enter [y] to begin. \n\
+                                     \Enter [i] to view instructions. \n")
   where
-    response = ServerMsg 4 gameStart
-    
+    response = ServerMsg 16 gameStart
+
+--check commands entered in welcome screen
+checkStartCmd :: URI -> String -> IO ()
+checkStartCmd uri "i" = do
+    clientStart uri instructions
+checkStartCmd uri "y" = do
+    clientLoop uri response
+        where
+            response = ServerMsg 4 gameStart
+checkStartCmd uri _ = do
+    clientStart uri "Invalid command.\n\
+                    \Enter [y] to begin. \n\
+                    \Enter [i] to view instructions. \n"
+
+--game has started
+--handle user input and server response
 clientLoop :: URI -> ServerMsg -> IO ()
 clientLoop uri response = do
     command <- putStr (msg response) >> hFlush stdout >> getLine
     let usrCmd = words command
-    let input = UserInput (newRoom response) (head usrCmd) (read (last usrCmd))
+    checkGameCmd uri (newRoom response) usrCmd
+
+--check commands entered during game
+checkGameCmd :: URI -> Int -> [String] -> IO ()
+checkGameCmd uri currRoom ["move", r] = do
+    let input = UserInput currRoom "move" (read r)
     newRsp <- submitCmd input uri
     checkResult uri newRsp
+checkGameCmd uri currRoom ["shoot", r] = do
+    let input = UserInput currRoom "shoot" (read r)
+    newRsp <- submitCmd input uri
+    checkResult uri newRsp
+checkGameCmd uri currRoom usrCmd = do
+    let response = ServerMsg currRoom "Invalid command. \n\
+                                        \Enter [move #] or [shoot #] where #\
+                                        \is the target room.\n"
+    clientLoop uri response
 
+--check if user died or not depending on the room
 checkResult :: URI -> String -> IO()
 checkResult uri rsp = do
     if ((newRoom response) == -1)
@@ -86,11 +122,10 @@ checkResult uri rsp = do
     where 
         response = decodeJSON rsp
 
-
+--post user input to server
 submitCmd :: UserInput -> URI -> IO String
-submitCmd g uri = do
+submitCmd cmd uri = do
     let rq = setRequestBody (mkRequest POST uri)
-                            ("text/json",encodeJSON g)
+                            ("text/json",encodeJSON cmd)
     rsp <- Network.HTTP.simpleHTTP rq
     getResponseBody rsp
-
