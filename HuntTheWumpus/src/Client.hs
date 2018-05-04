@@ -17,7 +17,7 @@ data ServerMsg = ServerMsg {newRoom::Int, msg::String} deriving (Eq,Data,Typeabl
 welcome :: String
 welcome = "Welcome to Hunt the Wumpus. \n \
             \-------------------------\n\
-            \ You have been brought to Room 4 in a cave with 20 rooms. \n\
+            \ You have been brought to a room in a cave with 20 rooms. \n\
             \ Some have bats and some have a deep pit. \n\
             \ The Wumpus is also in one of them. Find where he is and shoot \n\
             \ him with your arrow before he finds and eats you. \n\
@@ -51,8 +51,8 @@ instructions = "Instructions: \n\
                 \  \nAre you ready to hunt the wumpus? Enter [y] to begin  \n"
 
 gameStart :: String;
-gameStart = "You are now in Room 4. \n\
-             \Tunnels lead to 3 5 14. Move or Shoot? \n"
+gameStart = "You are now in Room 16. \n\
+             \Tunnels lead to 15 17 18. Move or Shoot? \n"
 
 huntClient :: [String] -> IO ()
 huntClient args = clientStart serverURI welcome
@@ -72,7 +72,7 @@ clientStart uri msg = do
                                      \Enter [y] to begin. \n\
                                      \Enter [i] to view instructions. \n")
   where
-    response = ServerMsg 4 gameStart
+    response = ServerMsg 16 gameStart
 
 checkStartCmd :: URI -> String -> IO ()
 checkStartCmd uri "i" = do
