@@ -56,7 +56,7 @@ huntServer = do
 handleCmd :: Handler String
 handleCmd addr url req | (command input) == "move"  = return $ sendText OK (handleMove (value input) (currRoom input))
                        | (command input) == "shoot" = return $ sendText OK (handleShoot (value input) (currRoom input))
-                       | otherwise                  = return $ sendText OK (ServerMsg (value input) "Invalid command. \n\
+                       | otherwise                  = return $ sendText OK (ServerMsg (currRoom input) "Invalid command. \n\
                                                                                                     \Enter [move #] or [shoot #] where #\
                                                                                                     \is the target room.\n")
   where input = decodeJSON $ rqBody req
