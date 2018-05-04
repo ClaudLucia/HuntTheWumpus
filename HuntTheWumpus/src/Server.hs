@@ -80,7 +80,12 @@ handleBat = ServerMsg randRoom ("Oh no! You were picked up by bats")
                           -- ++ (printRooms (paths !! (randRoom-1))) ++ "\n"
                           -- ++ handleSense randRoom)
                   where 
-                       randomRIO (0,6)
+                       randomIO (0,6)
+
+-- genRandom :: Int -> StdGen -> Int
+-- getRandom newRoom = 
+
+
 
 
 -- getRandom :: Int -> ServerMsg
