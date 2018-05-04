@@ -19,7 +19,7 @@ import Network.HTTP.Server (defaultConfig,
                             StatusCode(OK)
                            )
 import Network.HTTP.Server.Logger (stdLogger)
-import System.Random (getStdGen,randomR)
+import System.Random (getStdGen,randomR,randomIO)
 import System.Environment (getArgs)
 import Text.JSON.Generic
 import Data.List
@@ -79,23 +79,8 @@ handleBat = ServerMsg randRoom ("Oh no! You were picked up by bats")
                           -- ++ "\nTunnel leads to " 
                           -- ++ (printRooms (paths !! (randRoom-1))) ++ "\n"
                           -- ++ handleSense randRoom)
-                  where 
-                       randomIO (0,6)
-
--- genRandom :: Int -> StdGen -> Int
--- getRandom newRoom = 
-
-
-
-
--- getRandom :: Int -> ServerMsg
--- getRandom = do
---         gen <- getStdGen
---         index <- (fst $ randomR (0,6) gen :: Int)
---         let randRoom = (index !! [1,3,5,7,11,13,19])
---         handleBat randRoom
-
-        --else return $ sendText Ok ("Tunnel leads to " ++ printRooms(paths !! (newRoom-1)) ) 
+  where 
+    randRoom = randomIO (0,6)
 
 handleRoom :: Int -> ServerMsg
 handleRoom newRoom | (newRoom == 3)                    = ServerMsg (-1) "You lose! The Wumpus ate you...\n"
