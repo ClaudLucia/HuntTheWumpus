@@ -72,7 +72,7 @@ handleMove newRoom currRoom | (newRoom `elem` (paths !! (currRoom-1))) = handleR
 handleShoot :: Int -> Int -> ServerMsg
 handleShoot targetRoom currRoom | (targetRoom `elem` (paths !! (currRoom-1))) = if (targetRoom == 3)
                                                                                     then (ServerMsg (-1) ("You killed the Wumpus!"
-                                                                                                          ++ "Congratulations"))
+                                                                                                          ++ " Congratulations"))
                                                                                     else (ServerMsg currRoom "No Wumpus was shot. Move or shoot? \n")
                                 | otherwise                                   = (ServerMsg currRoom "Invalid room. Move or shoot? \n")
 
@@ -105,7 +105,7 @@ handleSense :: Int -> String
 handleSense roomNum | (roomNum `elem` [2,4,12])         = "I smell the Wumpus.\n"
                     | (roomNum `elem` [2,8,6,17,10,20]) = "I hear the bats.\n"
                     | (roomNum `elem` [4,6,14,18,9,20]) = "I feel a breeze.\n"
-                    | otherwise                         = ""
+                    | otherwise                         = " "
 
 --print available adjacent rooms
 printRooms :: [Int] -> String
