@@ -22,24 +22,21 @@ This is our final project for Marist College's Language Study course.
 ## How to play
 This is a 1-player game. You are the player, who has been placed in a random room in a cave containing 20 rooms.
 
-You see three tunnels to other rooms that are either
-  a) just like this one with nothing
-  b) contains bats that will transport you to a random room
-  c) contains a bottomless pit, in which you will fall into and die
-  d) contains a wumpus that will eat you alive
+You see three tunnels to other rooms that are either  
+  a) just like this one with nothing  
+  b) contains bats that will transport you to a random room  
+  c) contains a bottomless pit, in which you will fall into and die  
+  d) contains a wumpus that will eat you alive  
 
-To win the game, you have to find and kill the wumpus before it finds you. You have three special abilities:
-  1) Smell - you can smell the smelly wumpus that is in one of the
-             adjacent rooms
-  2) Feel  - you can feel the cool breeze from the bottomless pit
-             that is in one of the adjcaent rooms
-  3) Hear  - you can hear the bats that are in one of the adjacent
-             rooms
+To win the game, you have to find and kill the wumpus before it finds you. You have three special abilities:  
+  1) Smell - you can smell the smelly wumpus that is in one of the adjacent rooms  
+  2) Feel  - you can feel the cool breeze from the bottomless pit that is in one of the adjcaent rooms  
+  3) Hear  - you can hear the bats that are in one of the adjacent rooms  
 
 You also have a special crooked arrow that you will use to kill the wumpus. This special arrow can travel down a max number of 5 rooms from your current room.
 
-Every turn you can enter the following commands to:
-  a) move # - where # is the one of the three adjacent rooms
-  b) shoot # - where # is the first room that the crooked arrow will go
+Every turn you can enter the following commands to:  
+  a) move # - where # is the one of the three adjacent rooms  
+  b) shoot # - where # is the first room that the crooked arrow will go  
 
 ### Are you ready to hunt the wumpus?
