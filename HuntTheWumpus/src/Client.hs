@@ -43,11 +43,10 @@ instructions = "Instructions: \n\
                 \  3) Hear  - you can hear the bats that are in one of the adjacent \n\
                 \             rooms \n\
                 \  \nYou also have a special crooked arrow that you will use to kill the \n\
-                \  wumpus. This special arrow can travel down a max number of 5 rooms \n\
-                \  from your current room. \n\
+                \  wumpus. This special arrow can be shot down to an adjacent room. \n\
                 \  \nEvery turn you can enter the following commands to: \n\
                 \  a) move # - where # is the one of the three adjacent rooms \n\
-                \  b) shoot # - where # is the first room that the crooked arrow will go \n\
+                \  b) shoot # - where # is the room that the crooked arrow will go \n\
                 \  \nAre you ready to hunt the wumpus? Enter [y] to begin  \n"
 --initial room
 gameStart :: String;

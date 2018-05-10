@@ -73,7 +73,7 @@ handleShoot :: Int -> Int -> ServerMsg
 handleShoot targetRoom currRoom | (targetRoom `elem` (paths !! (currRoom-1))) = if (targetRoom == 3)
                                                                                     then (ServerMsg (-1) ("You killed the Wumpus!"
                                                                                                           ++ " Congratulations"))
-                                                                                    else (ServerMsg currRoom "No Wumpus was shot. Move or shoot? \n")
+                                                                                    else (ServerMsg (-1) "Game over. No Wumpus was shot. No more arrows left. \n")
                                 | otherwise                                   = (ServerMsg currRoom "Invalid room. Move or shoot? \n")
 
 --move user to a random room based on current room
