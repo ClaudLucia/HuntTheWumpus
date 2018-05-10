@@ -65,9 +65,9 @@ huntClient args = clientStart serverURI welcome
 clientStart :: URI -> String -> IO ()
 clientStart uri msg = do
     usrCmd <- putStr msg >> hFlush stdout >> getLine
-    if (usrCmd == "i")
+    if (usrCmd == "i" || usrCmd == "I")
         then clientStart uri instructions
-        else (if (usrCmd == "y")
+        else (if (usrCmd == "y" || usrCmd == "Y")
                 then clientLoop uri response
                 else clientStart uri "Invalid command.\n\
                                      \Enter [y] to begin. \n\
@@ -79,10 +79,17 @@ clientStart uri msg = do
 checkStartCmd :: URI -> String -> IO ()
 checkStartCmd uri "i" = do
     clientStart uri instructions
+checkStartCmd uri "I" = do
+    clientStart uri instructions
 checkStartCmd uri "y" = do
     clientLoop uri response
         where
             response = ServerMsg 4 gameStart
+checkStartCmd uri "Y" = do
+    clientLoop uri response
+        where
+            response = ServerMsg 4 gameStart
+
 checkStartCmd uri _ = do
     clientStart uri "Invalid command.\n\
                     \Enter [y] to begin. \n\
@@ -102,7 +109,15 @@ checkGameCmd uri currRoom ["move", r] = do
     let input = UserInput currRoom "move" (read r)
     newRsp <- submitCmd input uri
     checkResult uri newRsp
+checkGameCmd uri currRoom ["Move", r] = do
+    let input = UserInput currRoom "move" (read r)
+    newRsp <- submitCmd input uri
+    checkResult uri newRsp
 checkGameCmd uri currRoom ["shoot", r] = do
+    let input = UserInput currRoom "shoot" (read r)
+    newRsp <- submitCmd input uri
+    checkResult uri newRsp
+checkGameCmd uri currRoom ["Shoot", r] = do
     let input = UserInput currRoom "shoot" (read r)
     newRsp <- submitCmd input uri
     checkResult uri newRsp
