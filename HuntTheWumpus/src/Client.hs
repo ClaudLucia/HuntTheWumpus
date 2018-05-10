@@ -110,7 +110,7 @@ checkGameCmd uri currRoom ["shoot", r] = do
 checkGameCmd uri currRoom usrCmd = do
     let response = ServerMsg currRoom "Invalid command. \n\
                                         \Enter [move #] or [shoot #] where #\
-                                        \is the target room.\n"
+                                        \ is the target room.\n"
     clientLoop uri response
 
 --check if user died or not depending on the room
